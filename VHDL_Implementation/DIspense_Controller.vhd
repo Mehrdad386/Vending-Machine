@@ -9,7 +9,7 @@ ENTITY Dispense_Controller IS
         item_price : IN INTEGER;
         dispense_signal : OUT STD_LOGIC;
         error_signal : OUT STD_LOGIC;
-        change_return : OUT INTEGER;
+        change_return : OUT INTEGER
     );
 
 END Dispense_Controller;
@@ -25,7 +25,7 @@ BEGIN
         ELSIF rising_edge(clk) THEN
             IF balance >= item_price AND item_price > 0 THEN
                 dispense_signal <= '1';
-                change_return <= balance - item_pricce;
+                change_return <= balance - item_price;
             ELSE
                 dispense_signal <= '0';
                 IF balance < item_price THEN

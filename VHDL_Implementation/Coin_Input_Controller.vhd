@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
 USE IEEE.numeric_std.ALL;
-ENTITY Coin_Input IS
+ENTITY Coin_Input_Controller IS
     PORT (
         clk : IN STD_LOGIC;
         reset : IN STD_LOGIC;
@@ -9,8 +9,8 @@ ENTITY Coin_Input IS
         balance : OUT INTEGER
     );
 
-END Coin_Input;
-ARCHITECTURE Behavioral OF Coin_Input IS
+END Coin_Input_Controller;
+ARCHITECTURE Behavioral OF Coin_Input_Controller IS
     SIGNAL internal_balance : INTEGER := 0;
 BEGIN
     PROCESS (clk, reset)
