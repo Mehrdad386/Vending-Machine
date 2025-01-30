@@ -1,38 +1,34 @@
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+LIBRARY IEEE;
+USE IEEE.std_logic_1164.ALL;
+USE IEEE.numeric_std.ALL;
+ENTITY Item_selector IS
 
-
-entity Item_selector is 
-
-    port(
-        clk : in std_logic ;
-        reset : in std_logic ;
-        item_selection : in std_logic_vector (1 downto 0) ;
-        item_available : in std_logic ;
-        item_price : out integer
+    PORT (
+        clk : IN STD_LOGIC;
+        reset : IN STD_LOGIC;
+        item_selection : IN STD_LOGIC_VECTOR (1 DOWNTO 0);
+        item_available : IN STD_LOGIC;
+        item_price : OUT INTEGER
     );
-end Item_selector ;
+END Item_selector;
+ARCHITECTURE Behavioral OF Item_Selector IS
 
-
-architecture Behavioral of Item_Selector is 
-
-begin
-    process(reset , clk)
-    begin
-        if reset = '1' then 
-            item_price <= 0 ;
-        elsif rising_edge(clk) then 
-            if item_available = '1' then
-                case item_selection is
-                    when "00" => item_price <= 5 ; -- item A
-                    when "01" => item_price <= 7 ; -- item B
-                    when "10" => item_price <= 10 ; -- item C
-                    when others => item_price <= 0 ; -- invalid selection
-                end case ;
-            else
-                item_price <= 0 ;
-            end if ;
-        end if ;
-    end process ;
-end Behavioral ;
+BEGIN
+    PROCESS (reset, clk)
+    BEGIN
+        IF reset = '1' THEN
+            item_price <= 0;
+        ELSIF rising_edge(clk) THEN
+            IF item_available = '1' THEN
+                CASE item_selection IS
+                    WHEN "00" => item_price <= 5; -- item A
+                    WHEN "01" => item_price <= 7; -- item B
+                    WHEN "10" => item_price <= 10; -- item C
+                    WHEN OTHERS => item_price <= 0; -- invalid selection
+                END CASE;
+            ELSE
+                item_price <= 0;
+            END IF;
+        END IF;
+    END PROCESS;
+END Behavioral;
