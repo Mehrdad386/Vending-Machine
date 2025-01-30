@@ -9,4 +9,5 @@ END Vending_Machine;
 ARCHITECTURE Behavioral OF Vending_Machine IS
 
 BEGIN
+
 END Behavioral;
