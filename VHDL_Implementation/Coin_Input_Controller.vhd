@@ -20,11 +20,11 @@ BEGIN
             internal_balance <= 0;  
         ELSIF rising_edge(clk) THEN  
             CASE coin_input IS  
-                WHEN "01" => 
+                WHEN "00" => 
                     IF (internal_balance + 1) < 128 THEN
                         internal_balance <= internal_balance + 1;  
                     END IF;
-                WHEN "10" => 
+                WHEN "01" => 
                     IF (internal_balance + 5) < 128 THEN
                         internal_balance <= internal_balance + 5;  
                     END IF;
