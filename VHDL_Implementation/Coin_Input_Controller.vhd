@@ -20,15 +20,24 @@ BEGIN
             internal_balance <= 0;  
         ELSIF rising_edge(clk) THEN  
             CASE coin_input IS  
-                WHEN "01" => internal_balance <= internal_balance + 1;  
-                WHEN "10" => internal_balance <= internal_balance + 5;  
-                WHEN "11" => internal_balance <= internal_balance + 10;  
+                WHEN "01" => 
+                    IF (internal_balance + 1) < 128 THEN
+                        internal_balance <= internal_balance + 1;  
+                    END IF;
+                WHEN "10" => 
+                    IF (internal_balance + 5) < 128 THEN
+                        internal_balance <= internal_balance + 5;  
+                    END IF;
+                WHEN "11" => 
+                    IF (internal_balance + 10) < 128 THEN
+                        internal_balance <= internal_balance + 10;  
+                    END IF;
                 WHEN OTHERS => NULL;  
             END CASE;  
         END IF;  
     END PROCESS;  
 
-    -- Assign internal_balance to balance output  
+    -- Assign internal_balance to balance output
     balance <= internal_balance;  
 
-END Behavioral;
+END Behavioral; 

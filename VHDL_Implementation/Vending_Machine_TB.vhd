@@ -1,13 +1,12 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
+LIBRARY IEEE;
+USE IEEE.std_logic_1164.ALL;
+USE IEEE.numeric_std.ALL;
 
 ENTITY Vending_Machine_TB IS
 
 END Vending_Machine_TB;
 
 ARCHITECTURE behavior OF Vending_Machine_TB IS
-
 
     COMPONENT Vending_Machine
     PORT(
@@ -23,7 +22,6 @@ ARCHITECTURE behavior OF Vending_Machine_TB IS
     );
     END COMPONENT;
 
-
     SIGNAL clk: STD_LOGIC := '0';
     SIGNAL reset: STD_LOGIC := '0';
     SIGNAL coin_input: STD_LOGIC_VECTOR(1 DOWNTO 0);
@@ -34,11 +32,9 @@ ARCHITECTURE behavior OF Vending_Machine_TB IS
     SIGNAL dispense_signal: STD_LOGIC;
     SIGNAL error_signal: STD_LOGIC;
 
-
     CONSTANT clk_period : TIME := 10 ns;
 
 BEGIN
-
 
     uut: Vending_Machine
     PORT MAP (
@@ -53,7 +49,6 @@ BEGIN
         error_signal => error_signal
     );
 
-
     clk_process : PROCESS
     BEGIN
         clk <= '0';
@@ -62,10 +57,8 @@ BEGIN
         WAIT FOR clk_period / 2;
     END PROCESS;
 
-
     stim_proc: PROCESS
     BEGIN
-
 
         reset <= '1';
         coin_input <= "00"; -- No coin
@@ -96,16 +89,12 @@ BEGIN
         item_available <= '1'; -- set item as available
         WAIT FOR clk_period;
 
-        -- Check the outputs after selection
-        WAIT FOR clk_period;
-
         -- Dispense item
         item_selection <= "10"; -- Select item C
         WAIT FOR clk_period;
 
         -- Check balance display and signals
         WAIT FOR clk_period * 5;  -- Wait to observe the dispense and signals
-
 
         ASSERT FALSE REPORT "End of Testbench" SEVERITY note;
 
