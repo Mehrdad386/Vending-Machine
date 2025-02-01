@@ -1,0 +1,16 @@
+v 3
+file . ".\Vending_Machine_tb.vhd" "20250131224616.000" "20250201220117.216":
+  entity tb_vending_machine at 1( 0) + 0 on 19;
+  architecture behavior of tb_vending_machine at 8( 131) + 0 on 20;
+file . ".\Coin_Input_Controller.vhd" "20250201180848.000" "20250201220113.091":
+  entity coin_input_controller at 1( 0) + 0 on 11;
+  architecture behavioral of coin_input_controller at 14( 319) + 0 on 12;
+file . ".\DIspense_Controller.vhd" "20250201121034.000" "20250201220113.092":
+  entity dispense_controller at 1( 0) + 0 on 13;
+  architecture behavioral of dispense_controller at 18( 456) + 0 on 14;
+file . ".\Item_selector.vhd" "20250201180902.000" "20250201220113.093":
+  entity item_selector at 1( 0) + 0 on 15;
+  architecture behavioral of item_selector at 15( 335) + 0 on 16;
+file . ".\Vending_Machine.vhd" "20250201182648.000" "20250201220113.094":
+  entity vending_machine at 1( 0) + 0 on 17;
+  architecture structural of vending_machine at 24( 892) + 0 on 18;

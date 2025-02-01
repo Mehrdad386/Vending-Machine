@@ -22,7 +22,6 @@ ENTITY Vending_Machine IS
 END Vending_Machine;
 
 ARCHITECTURE Structural OF Vending_Machine IS
-
 BEGIN
     Coin_input_Controller : ENTITY work.Coin_Input_Controller
         PORT MAP(
@@ -52,8 +51,21 @@ BEGIN
             error_signal => error_sig,
             change_return => change_return
         );
+
     dispense_signal <= dispense_sig;
     error_signal <= error_sig;
-    balance_display <= STD_LOGIC_VECTOR(to_unsigned(balance, balance_display'length));
+
+    PROCESS(clk, reset)
+    BEGIN
+        IF reset = '1' THEN
+            balance_display <= (others => '0');
+        ELSIF rising_edge(clk) THEN
+            IF balance < 128 THEN
+                balance_display <= STD_LOGIC_VECTOR(to_unsigned(balance, balance_display'length));
+            ELSE
+                balance_display <= (others => '0');
+            END IF;
+        END IF;
+    END PROCESS;
 
 END Structural;
