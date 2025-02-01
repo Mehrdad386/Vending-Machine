@@ -2,126 +2,143 @@ LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
 USE IEEE.numeric_std.ALL;
 
-ENTITY Vending_Machine_TB IS
-END Vending_Machine_TB;
+ENTITY tb_Vending_Machine IS
+END tb_Vending_Machine;
 
-ARCHITECTURE behavior OF Vending_Machine_TB IS
+ARCHITECTURE behavior OF tb_Vending_Machine IS 
+
     COMPONENT Vending_Machine
-        PORT (
-            clk : IN STD_LOGIC;
-            reset : IN STD_LOGIC;
-            coin_input : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-            item_selection : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-            item_available : IN STD_LOGIC;
-            new_order_request : IN STD_LOGIC;
-            balance_display : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
-            change_return : OUT INTEGER;
-            dispense_signal : OUT STD_LOGIC;
-            error_signal : OUT STD_LOGIC
+    PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         coin_input : IN  std_logic_vector(1 downto 0);
+         item_selection : IN  std_logic_vector(1 downto 0);
+         item_available : IN  std_logic;
+         new_order_request : IN  std_logic;
+         balance_display : OUT  std_logic_vector(6 downto 0);
+         change_return : OUT  INTEGER;
+         dispense_signal : OUT  std_logic;
+         error_signal : OUT  std_logic
         );
     END COMPONENT;
+
     -- Inputs
-    SIGNAL clk : STD_LOGIC := '0';
-    SIGNAL reset : STD_LOGIC := '1';
-    SIGNAL coin_input : STD_LOGIC_VECTOR(1 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL item_selection : STD_LOGIC_VECTOR(1 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL item_available : STD_LOGIC := '0';
-    SIGNAL new_order_request : STD_LOGIC := '0';
+    signal clk : std_logic := '0';
+    signal reset : std_logic := '1';
+    signal coin_input : std_logic_vector(1 downto 0) := (others => '0');
+    signal item_selection : std_logic_vector(1 downto 0) := (others => '0');
+    signal item_available : std_logic := '0';
+    signal new_order_request : std_logic := '0';
 
     -- Outputs
-    SIGNAL balance_display : STD_LOGIC_VECTOR(6 DOWNTO 0);
-    SIGNAL change_return : INTEGER;
-    SIGNAL dispense_signal : STD_LOGIC;
-    SIGNAL error_signal : STD_LOGIC;
+    signal balance_display : std_logic_vector(6 downto 0);
+    signal change_return : INTEGER;
+    signal dispense_signal : std_logic;
+    signal error_signal : std_logic;
 
-    CONSTANT clk_period : TIME := 10 ns;
+    constant clk_period : time := 10 ns;
 
 BEGIN
 
-    uut : Vending_Machine PORT MAP(
-        clk => clk,
-        reset => reset,
-        coin_input => coin_input,
-        item_selection => item_selection,
-        item_available => item_available,
-        new_order_request => new_order_request,
-        balance_display => balance_display,
-        change_return => change_return,
-        dispense_signal => dispense_signal,
-        error_signal => error_signal
-    );
+    uut: Vending_Machine PORT MAP (
+          clk => clk,
+          reset => reset,
+          coin_input => coin_input,
+          item_selection => item_selection,
+          item_available => item_available,
+          new_order_request => new_order_request,
+          balance_display => balance_display,
+          change_return => change_return,
+          dispense_signal => dispense_signal,
+          error_signal => error_signal
+        );
 
     -- Clock process
-    clk_process : PROCESS
-    BEGIN
+    clk_process :process
+    begin
         clk <= '0';
-        WAIT FOR clk_period/2;
+        wait for clk_period/2;
         clk <= '1';
-        WAIT FOR clk_period/2;
-    END PROCESS;
+        wait for clk_period/2;
+    end process;
 
     -- Stimulus process
-    stim_proc : PROCESS
-    BEGIN
+    stim_proc: process
+    begin
         -- Hold reset state for a while
         reset <= '1';
-        WAIT FOR 20 ns;
+        wait for 20 ns;  
         reset <= '0';
+        
+        -- Scenario 1: Insert coins and buy item A (price 5)
+        coin_input <= "01";  -- Insert 1 unit
+        wait for clk_period;
+        coin_input <= "10";  -- Insert 5 units
+        wait for clk_period;
 
-        -- Case 1: Insert coins (5, 10)
-        coin_input <= "01"; -- Insert 1 unit
-        WAIT FOR clk_period;
-        coin_input <= "10"; -- Insert 5 units
-        WAIT FOR clk_period;
+        -- Request item A (available)
+        item_available <= '1';  
+        item_selection <= "00";  -- Select item A
+        wait for clk_period;
 
-        -- Request item A (price 5)
-        item_available <= '1';
-        item_selection <= "00"; -- Select item A
-        WAIT FOR clk_period;
+        -- Check if item A was dispensed
+        wait for clk_period;  -- Wait for dispensing
 
-        -- Enable dispensing
-        WAIT FOR clk_period;
+        -- Scenario 2: Not enough balance for item B (price 7)
+        new_order_request <= '1';  -- Request new order
+        wait for clk_period;
+        new_order_request <= '0';   -- Reset new order request
+        
+        coin_input <= "00";  -- Insert 1 unit (balance = 1)
+        wait for clk_period;
+        item_selection <= "01";  -- Select item B
+        wait for clk_period;  -- Should trigger error signal
 
-        -- Case 2: New order request for item B (price 7)
-        new_order_request <= '1'; -- Request new order
-        WAIT FOR clk_period;
-        new_order_request <= '0'; -- Reset new order request
+        -- Scenario 3: Insert enough coins and buy item B
+        coin_input <= "01";  -- Insert 1 unit (balance = 2)
+        wait for clk_period;
+        coin_input <= "10";  -- Insert 5 units (balance = 7)
+        wait for clk_period;
 
-        -- Insert more coins (2 units)
-        coin_input <= "00"; -- Insert 1 unit, reaching balance 2
-        WAIT FOR clk_period;
+        item_selection <= "01";  -- Select item B
+        wait for clk_period;  -- Should dispense item B
 
-        -- Request item B (price 7), expecting error
-        item_selection <= "01"; -- Select item B
-        WAIT FOR clk_period;
+        -- Scenario 4: Out of stock for item C
+        new_order_request <= '1';  -- Request new order
+        wait for clk_period;
+        new_order_request <= '0';   -- Reset new order request
 
-        -- Case 3: Insert enough coins
-        coin_input <= "01"; -- Insert 1 unit
-        WAIT FOR clk_period;
-        coin_input <= "10"; -- Insert 5 units
-        WAIT FOR clk_period;
+        item_available <= '0';  -- Item C is not available
+        coin_input <= "01";  -- Insert 1 unit
+        wait for clk_period;
+        coin_input <= "10";  -- Insert 5 units
+        wait for clk_period;
 
-        -- Request item B (price 7)
-        item_selection <= "01"; -- Select item B
-        WAIT FOR clk_period;
+        item_selection <= "10";  -- Request item C (which is out of stock)
+        wait for clk_period;  -- Should trigger error signal
 
-        -- Request a new order for item C (price 10)
-        new_order_request <= '1'; -- Request new order
-        WAIT FOR clk_period;
-        new_order_request <= '0'; -- Reset new order request
+        -- Scenario 5: Buy item C after it becomes available
+        item_available <= '1';  -- Now item C is available
+        wait for clk_period;
 
-        -- Insert coins to get sufficient balance
-        coin_input <= "01"; -- Insert 1 unit
-        WAIT FOR clk_period;
-        coin_input <= "10"; -- Insert 5 units
-        WAIT FOR clk_period;
+        item_selection <= "10";  -- Select item C
+        wait for clk_period;  -- Should dispense item C
 
-        -- Request item C
-        item_selection <= "10"; -- Select item C
-        WAIT FOR clk_period;
+        -- Scenario 6: Repeat new order for item A and have sufficient balance
+        new_order_request <= '1';  -- Request new order
+        wait for clk_period;
+        new_order_request <= '0';   -- Reset new order request
+
+        coin_input <= "10";  -- Insert 5 units
+        wait for clk_period;  
+        coin_input <= "01";  -- Insert 1 unit
+        wait for clk_period;  
+
+        item_selection <= "00";  -- Select item A again
+        wait for clk_period;  -- Should dispense item A
 
         -- Finish the simulation
-        WAIT;
-    END PROCESS;
+        wait;
+    end process;
 
 END behavior;
